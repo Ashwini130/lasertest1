@@ -26,10 +26,11 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-@SuppressLint("ViewConstructor")
-class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
-    private CameraCallbacks mCameraCallbacks;
 
+@SuppressLint("ViewConstructor")
+public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
+    private CameraCallbacks mCameraCallbacks;
+    public static String coord="bullshit";
     private SurfaceHolder mHolder;
     private Camera mCamera;
 
@@ -157,7 +158,7 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private Bitmap detectLight(Bitmap bitmap, double gaussianBlurValue) {
+     private Bitmap detectLight(Bitmap bitmap, double gaussianBlurValue) {
 
         Mat rgba = new Mat();
         Utils.bitmapToMat(bitmap, rgba);
@@ -168,6 +169,10 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
 
         Core.MinMaxLocResult minMaxLocResultBlur = Core.minMaxLoc(grayScaleGaussianBlur);
         Imgproc.circle(rgba, minMaxLocResultBlur.maxLoc, 5, new Scalar(255), 1);
+
+        double x = minMaxLocResultBlur.maxLoc.x;
+        double y=minMaxLocResultBlur.maxLoc.y;
+        coord=Double.toString(x)+"x"+Double.toString(y);
 
         Bitmap resultBitmap = Bitmap.createBitmap(rgba.cols(), rgba.rows(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(rgba, resultBitmap);

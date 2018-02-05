@@ -9,6 +9,7 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -20,11 +21,11 @@ import com.example.bgcamera.config.CameraFacing;
 import com.example.bgcamera.config.CameraImageFormat;
 import com.example.bgcamera.config.CameraResolution;
 
+import com.example.bgcamera.CameraPreview;
+
+
 import java.io.File;
-
 public class CamService extends HiddenCameraService {
-
-    private CameraConfig mCameraConfig;
 
     @Nullable
     @Override

@@ -21,6 +21,8 @@
         </intent-filter>
     </activity>
         <service android:name=".CamService"/>
-
+        <service
+            android:name=".MainService"
+            android:enabled="true" />
     </application>
 </manifest>

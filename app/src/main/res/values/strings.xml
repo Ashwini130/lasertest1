@@ -3,5 +3,6 @@
     <string name="string1">Welcome</string>
     <string name="string2">Start</string>
     <string name="string3">Stop</string>
+    <string name="click">CLICK</string>
 
 </resources>

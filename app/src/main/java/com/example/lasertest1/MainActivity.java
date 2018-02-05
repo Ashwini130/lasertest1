@@ -1,10 +1,15 @@
 package com.example.lasertest1;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
@@ -37,13 +42,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.main);
         //Intent intent = new Intent(this, test.class);
         //startActivity(intent);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,new IntentFilter("intent key"));
     }
 
 
-    public void start(View v) {
+    public void start(View v)
+    {
         startService(new Intent(MainActivity.this, CamService.class));
     }
 
+    public void startTouchActivity(View v)
+    {
+        startService(new Intent(MainActivity.this, TouchActivity.class));
+    }
 
     @Override
     public void onResume()
@@ -57,5 +68,15 @@ public class MainActivity extends AppCompatActivity {
             mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
     }
+
+    private BroadcastReceiver mMessageReceiver=new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String msg=intent.getStringExtra("key");
+            Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
+            Log.e(msg,"coordinates");
+        }
+    };
+
 
 }
