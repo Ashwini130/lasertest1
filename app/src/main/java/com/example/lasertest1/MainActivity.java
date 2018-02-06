@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.main);
         //Intent intent = new Intent(this, test.class);
         //startActivity(intent);
-        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,new IntentFilter("intent key"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,new IntentFilter("intentkey"));
     }
 
 
@@ -53,8 +53,22 @@ public class MainActivity extends AppCompatActivity {
 
     public void startTouchActivity(View v)
     {
-        startService(new Intent(MainActivity.this, TouchActivity.class));
+        Intent myIntent = new Intent(MainActivity.this,
+                TouchActivity.class);
+        startActivity(myIntent);
     }
+
+    public BroadcastReceiver mMessageReceiver=new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals("intentkey"))
+            {
+                String msg = intent.getStringExtra("key");
+                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+                Log.e(msg, "coordinates in activity");
+            }
+        }
+    };
 
     @Override
     public void onResume()
@@ -68,15 +82,5 @@ public class MainActivity extends AppCompatActivity {
             mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
     }
-
-    private BroadcastReceiver mMessageReceiver=new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String msg=intent.getStringExtra("key");
-            Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-            Log.e(msg,"coordinates");
-        }
-    };
-
 
 }

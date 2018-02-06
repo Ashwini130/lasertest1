@@ -54,6 +54,7 @@ public abstract class HiddenCameraService extends Service implements CameraCallb
             //Add the camera preview surface to the root of the activity view.
             if (mCameraPreview == null) mCameraPreview = addPreView();
             mCameraPreview.startCameraInternal(cameraConfig);
+
             coord1=mCameraPreview.coord;
             Log.e(coord1,"coordinates1"+coord1);
             String get1 = CameraPreview.coord;
@@ -72,7 +73,8 @@ public abstract class HiddenCameraService extends Service implements CameraCallb
             if (mCameraPreview.isSafeToTakePictureInternal()) {
                 mCameraPreview.takePictureInternal();
                 coord1=mCameraPreview.coord;
-                Log.e(coord1,"coordinates"+coord1);
+
+                Log.e(coord1,"coordinates in service"+coord1);
                 String get1 = CameraPreview.coord;
                 Intent intent1=new Intent("intentkey");
                 intent1.putExtra("key",get1);

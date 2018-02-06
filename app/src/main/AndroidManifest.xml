@@ -20,6 +20,8 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
     </activity>
+        <activity android:name=".TouchActivity"></activity>
+
         <service android:name=".CamService"/>
         <service
             android:name=".MainService"
