@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="match_parent" android:layout_width="match_parent">
+    <PreferenceCategory android:key="test_category_key">
+        <SwitchPreference android:title="@string/set"
+            android:id="@+id/pref"
+            android:key="border"
+            android:defaultValue="false">
+        </SwitchPreference>
+    </PreferenceCategory>
+</PreferenceScreen>
