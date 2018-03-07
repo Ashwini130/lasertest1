@@ -27,4 +27,5 @@ dependencies {
     compile project(path: ':bgCamera')
     compile 'com.github.bumptech.glide:glide:3.5.2'
     compile project(path: ':openCVLibrary331')
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 }

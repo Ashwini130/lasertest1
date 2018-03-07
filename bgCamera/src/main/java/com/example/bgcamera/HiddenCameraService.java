@@ -1,25 +1,39 @@
 package com.example.bgcamera;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
+import android.graphics.Point;
 import android.os.Build;
 import android.support.annotation.RequiresPermission;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.Display;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.security.AccessController;
 
-public abstract class HiddenCameraService extends Service implements CameraCallbacks {
+import static android.content.ContentValues.TAG;
+import static java.security.AccessController.getContext;
+
+
+public abstract class HiddenCameraService extends Service implements CameraCallbacks  {
     
     private WindowManager mWindowManager;
     private CameraPreview mCameraPreview;
     public String coord1;
+    public static long xx=0;
+    public static long yy=0;
+    public int i;
+    public long hofimage,wofimage;
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
@@ -54,14 +68,14 @@ public abstract class HiddenCameraService extends Service implements CameraCallb
             //Add the camera preview surface to the root of the activity view.
             if (mCameraPreview == null) mCameraPreview = addPreView();
             mCameraPreview.startCameraInternal(cameraConfig);
-
-            coord1=mCameraPreview.coord;
+           // mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+            /*coord1=mCameraPreview.coord;
             Log.e(coord1,"coordinates1"+coord1);
             String get1 = CameraPreview.coord;
             Intent intent1=new Intent("intentkey");
             intent1.putExtra("key",get1);
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent1);
-        }
+       */ }
     }
 
     /**
@@ -74,11 +88,6 @@ public abstract class HiddenCameraService extends Service implements CameraCallb
                 mCameraPreview.takePictureInternal();
                 coord1=mCameraPreview.coord;
 
-                Log.e(coord1,"coordinates in service"+coord1);
-                String get1 = CameraPreview.coord;
-                Intent intent1=new Intent("intentkey");
-                intent1.putExtra("key",get1);
-                LocalBroadcastManager.getInstance(this).sendBroadcast(intent1);
 
             }
         } else {

@@ -8,7 +8,11 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -19,7 +23,8 @@ import org.opencv.core.Mat;
 public class MainActivity extends AppCompatActivity {
 
     Mat imageMat;
-
+    //WindowManager mWindowManager;
+int f=0;
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -43,13 +48,19 @@ public class MainActivity extends AppCompatActivity {
         //Intent intent = new Intent(this, test.class);
         //startActivity(intent);
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,new IntentFilter("intentkey"));
+       // mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+
     }
 
 
     public void start(View v)
     {
         startService(new Intent(MainActivity.this, CamService.class));
+        /*if(f==1)
+            startActivity(new Intent(MainActivity.this,TouchActivity.class));*/
     }
+
+
 
     public void startTouchActivity(View v)
     {
@@ -58,17 +69,48 @@ public class MainActivity extends AppCompatActivity {
         startActivity(myIntent);
     }
 
-    public BroadcastReceiver mMessageReceiver=new BroadcastReceiver() {
+    public void bluetooth(View v)
+    {
+        startActivity(new Intent(MainActivity.this,BluetoothConnectionActivity.class));
+    }
+
+    BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals("intentkey"))
-            {
+            if (intent.getAction().equals("intentkey")) {
                 String msg = intent.getStringExtra("key");
                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
                 Log.e(msg, "coordinates in activity");
+                //stopService(new Intent(MainActivity.this,CamService.class));
+                f=1;
             }
         }
     };
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.settings:
+            {
+                Intent intent = new Intent(this, PreferenceSettingActivity.class);
+                startActivity(intent);
+
+                return true;
+            }
+            default:
+            {
+                return false;
+            }
+        }
+    }
+
 
     @Override
     public void onResume()

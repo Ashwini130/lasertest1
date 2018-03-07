@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.example.bgcamera.HiddenCameraService;
+
 /**
  * Created by Ashwini on 05-02-2018.
  */
@@ -19,8 +21,7 @@ public class TouchActivity extends Activity {
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-
-            startService(new Intent(this, MainService.class));
+                startService(new Intent(this, MainService.class));
 
             finish();
         }

@@ -4,5 +4,12 @@
     <string name="string2">Start</string>
     <string name="string3">Stop</string>
     <string name="click">CLICK</string>
+    <string name="settings">settings</string>
+    <string name="set">set</string>
+    <string name="start_bluetooth_connection">Start Bluetooth Connection</string>
+    <string name="close">Close</string>
+    <string name="send">SEND</string>
+    <string name="open">Open</string>
+    <string name="type_here">Type here:</string>
 
 </resources>

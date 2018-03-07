@@ -15,10 +15,13 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
+import com.example.bgcamera.CameraPreview;
+import com.example.bgcamera.HiddenCameraService;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class MainService extends Service implements View.OnTouchListener, View.OnClickListener {
+public class MainService extends Service{//} implements View.OnTouchListener, View.OnClickListener {
     private final String TAG = this.getClass().getName();
 
     private final int MIN_CLICK_TIME = 1000; //min time to launch the app
@@ -38,33 +41,33 @@ public class MainService extends Service implements View.OnTouchListener, View.O
     private int mTargetY;
 
     private boolean mIsTouchDown;
-    private ARROW mLastInput;
+    //private ARROW mLastInput;
     private boolean mIsFullMode;//true if the full control view is shown
 
-    Runnable mMoveViewRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (mIsTouchDown == true) {
-                mTargetView.postDelayed(mMoveViewRunnable, TARGET_PERIOD);
-            }
-            switch (mLastInput) {
-                case DOWN:
-                    moveDown();
-                    return;
-                case UP:
-                    moveUp();
-                    return;
-                case LEFT:
-                    moveLeft();
-                    return;
-                case RIGHT:
-                    moveRight();
-                    return;
-                default:
-                    return;
-            }
-        }
-    };
+//    Runnable mMoveViewRunnable = new Runnable() {
+//        @Override
+//        public void run() {
+//            if (mIsTouchDown == true) {
+//                mTargetView.postDelayed(mMoveViewRunnable, TARGET_PERIOD);
+//            }
+//            switch (mLastInput) {
+//                case DOWN:
+//                    moveDown();
+//                    return;
+//                case UP:
+//                    moveUp();
+//                    return;
+//                case LEFT:
+//                    moveLeft();
+//                    return;
+//                case RIGHT:
+//                    moveRight();
+//                    return;
+//                default:
+//                    return;
+//            }
+//        }
+//    };
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -79,13 +82,14 @@ public class MainService extends Service implements View.OnTouchListener, View.O
         mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         mIsFullMode = false;
         mIsTouchDown = false;
-        mLastInput = null;
+        proceedClick();
+      //  mLastInput = null;
 
-        initViews();
-        initListeners();
-        centerTargetInScreen();
+       // initViews();
+        //initListeners();
+        //centerTargetInScreen();
 
-        mWindowManager.addView(mReducedView, mParams);
+//        mWindowManager.addView(mReducedView, mParams);
     }
 
     /**
@@ -118,26 +122,28 @@ public class MainService extends Service implements View.OnTouchListener, View.O
     /**
      * Initialize the listeners
      */
-    private void initListeners() {
-        mControlView.findViewById(R.id.exit_button).setOnClickListener(this);
-        mControlView.findViewById(R.id.minus_button).setOnClickListener(this);
-        mControlView.findViewById(R.id.button_click).setOnClickListener(this);
-
-        mControlView.findViewById(R.id.arrow_up).setOnTouchListener(this);
-        mControlView.findViewById(R.id.arrow_down).setOnTouchListener(this);
-        mControlView.findViewById(R.id.arrow_left).setOnTouchListener(this);
-        mControlView.findViewById(R.id.arrow_right).setOnTouchListener(this);
-
-        mReducedView.setOnTouchListener(getNewReducedControlListener());
-    }
+//    private void initListeners() {
+//        mControlView.findViewById(R.id.exit_button).setOnClickListener(this);
+//        mControlView.findViewById(R.id.minus_button).setOnClickListener(this);
+//        mControlView.findViewById(R.id.button_click).setOnClickListener(this);
+//
+//        mControlView.findViewById(R.id.arrow_up).setOnTouchListener(this);
+//        mControlView.findViewById(R.id.arrow_down).setOnTouchListener(this);
+//        mControlView.findViewById(R.id.arrow_left).setOnTouchListener(this);
+//        mControlView.findViewById(R.id.arrow_right).setOnTouchListener(this);
+//
+//        mReducedView.setOnTouchListener(getNewReducedControlListener());
+//    }
 
     private void proceedClick() {
         Process sh = null;
         try {
             sh = Runtime.getRuntime().exec("su", null, null);
             OutputStream os = sh.getOutputStream();
-            os.write(("input tap " + mTargetParams.x + " " + mTargetParams.y).getBytes("ASCII"));
-            Log.d(TAG, mTargetParams.x + " " + mTargetParams.y);
+            int x= CameraPreview.x;
+            int y=CameraPreview.y;
+            os.write(("input tap " + x + " " + y).getBytes("ASCII"));
+            Log.d("touched here v1", x + " " + y);
             os.flush();
             os.close();
             sh.waitFor();
@@ -162,7 +168,7 @@ public class MainService extends Service implements View.OnTouchListener, View.O
      * Generate a listener for the reduced control view :
      * drag and drop, launch app on click
      */
-    private View.OnTouchListener getNewReducedControlListener() {
+  /*  private View.OnTouchListener getNewReducedControlListener() {
         return new View.OnTouchListener() {
             private int initialX;
             private int initialY;
@@ -203,11 +209,11 @@ public class MainService extends Service implements View.OnTouchListener, View.O
             }
         };
     }
-
+*/
     /**
      * Hide the reduced control and show the full app
      */
-    private void showFullApp() {
+  /*  private void showFullApp() {
         mWindowManager.removeView(mReducedView);
         mWindowManager.addView(mControlView, mParams);
         mWindowManager.addView(mTargetView, mTargetParams);
@@ -217,103 +223,103 @@ public class MainService extends Service implements View.OnTouchListener, View.O
     /**
      * Hide the full control and show the reduced app
      */
-    private void reduceApp() {
+/*    private void reduceApp() {
         mWindowManager.removeView(mControlView);
         mWindowManager.removeView(mTargetView);
         mWindowManager.addView(mReducedView, mParams);
         mIsFullMode = false;
     }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mIsFullMode) {
-            if (mControlView != null)
-                mWindowManager.removeView(mControlView);
-            mWindowManager.removeView(mTargetView);
-        } else {
-            if (mReducedView != null)
-                mWindowManager.removeView(mReducedView);
-        }
-    }
-
-    private boolean moveUp() {
-        mTargetParams.y -= TARGET_SPEED;
-        mWindowManager.updateViewLayout(mTargetView, mTargetParams);
-        return true;
-    }
-
-    private boolean moveDown() {
-        mTargetParams.y += TARGET_SPEED;
-        mWindowManager.updateViewLayout(mTargetView, mTargetParams);
-        return true;
-    }
-
-    private boolean moveLeft() {
-        mTargetParams.x -= TARGET_SPEED;
-        mWindowManager.updateViewLayout(mTargetView, mTargetParams);
-        return true;
-    }
-
-    private boolean moveRight() {
-        mTargetParams.x += TARGET_SPEED;
-        mWindowManager.updateViewLayout(mTargetView, mTargetParams);
-        return true;
-    }
-
-    @Override
-    public boolean onTouch(View v, MotionEvent motionEvent) {
-        updateLastEventArrow(v);
-        switch (motionEvent.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                mIsTouchDown = true;
-                mMoveViewRunnable.run();
-                return true;
-            case MotionEvent.ACTION_UP:
-                mIsTouchDown = false;
-                return true;
-        }
-
-        return false;
-    }
-
-    private void updateLastEventArrow(View v) {
-        switch (v.getId()) {
-            case R.id.arrow_up:
-                this.mLastInput = ARROW.UP;
-                return;
-            case R.id.arrow_down:
-                this.mLastInput = ARROW.DOWN;
-                return;
-            case R.id.arrow_left:
-                this.mLastInput = ARROW.LEFT;
-                return;
-            case R.id.arrow_right:
-                this.mLastInput = ARROW.RIGHT;
-                return;
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.exit_button:
-                stopSelf();
-                return;
-            case R.id.minus_button:
-                reduceApp();
-                return;
-            case R.id.button_click:
-                proceedClick();
-                return;
-        }
-    }
-
-    private enum ARROW {
-        UP,
-        DOWN,
-        LEFT,
-        RIGHT
-    }
+*/
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        if (mIsFullMode) {
+//            if (mControlView != null)
+//                mWindowManager.removeView(mControlView);
+//            mWindowManager.removeView(mTargetView);
+//        } else {
+//            if (mReducedView != null)
+//                mWindowManager.removeView(mReducedView);
+//        }
+//    }
+//
+//    private boolean moveUp() {
+//        mTargetParams.y -= TARGET_SPEED;
+//        mWindowManager.updateViewLayout(mTargetView, mTargetParams);
+//        return true;
+//    }
+//
+//    private boolean moveDown() {
+//        mTargetParams.y += TARGET_SPEED;
+//        mWindowManager.updateViewLayout(mTargetView, mTargetParams);
+//        return true;
+//    }
+//
+//    private boolean moveLeft() {
+//        mTargetParams.x -= TARGET_SPEED;
+//        mWindowManager.updateViewLayout(mTargetView, mTargetParams);
+//        return true;
+//    }
+//
+//    private boolean moveRight() {
+//        mTargetParams.x += TARGET_SPEED;
+//        mWindowManager.updateViewLayout(mTargetView, mTargetParams);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onTouch(View v, MotionEvent motionEvent) {
+//        updateLastEventArrow(v);
+//        switch (motionEvent.getAction()) {
+//            case MotionEvent.ACTION_DOWN:
+//                mIsTouchDown = true;
+//                mMoveViewRunnable.run();
+//                return true;
+//            case MotionEvent.ACTION_UP:
+//                mIsTouchDown = false;
+//                return true;
+//        }
+//
+//        return false;
+//    }
+//
+//    private void updateLastEventArrow(View v) {
+//        switch (v.getId()) {
+//            case R.id.arrow_up:
+//                this.mLastInput = ARROW.UP;
+//                return;
+//            case R.id.arrow_down:
+//                this.mLastInput = ARROW.DOWN;
+//                return;
+//            case R.id.arrow_left:
+//                this.mLastInput = ARROW.LEFT;
+//                return;
+//            case R.id.arrow_right:
+//                this.mLastInput = ARROW.RIGHT;
+//                return;
+//        }
+//    }
+//
+//    @Override
+//    public void onClick(View v) {
+//        switch (v.getId()) {
+//            case R.id.exit_button:
+//                stopSelf();
+//                return;
+//            case R.id.minus_button:
+//                reduceApp();
+//                return;
+//            case R.id.button_click:
+//                proceedClick();
+//                return;
+//        }
+//    }
+//
+//    private enum ARROW {
+//        UP,
+//        DOWN,
+//        LEFT,
+//        RIGHT
+//    }
 
 }
